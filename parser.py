@@ -5,7 +5,8 @@ def instructions_parser(filepath):
     arguments = []
 
     if not os.path.isfile(filepath):
-        return 0
+        print('Invalid file path, file not found')
+        exit()
 
     with open(filepath.rstrip('\r')) as file:
         complete_instructions = file.read().splitlines()
@@ -45,6 +46,6 @@ def instructions_parser(filepath):
             else:
                 print('Invalid instruction, unknown command')
                 print('Skipping instruction {}'.format(i+1))
-                
+
         return instructions, arguments
             
