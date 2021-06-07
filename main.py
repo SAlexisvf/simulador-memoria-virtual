@@ -20,11 +20,9 @@ def virtual_memory_manager(filepath, algorithm):
         elif instruction == 'C':
             instructions_set.comment(arguments.pop(0))
         elif instruction == 'F':
-            instructions_set.end()
-        # instruction 'E'.
-        # the parser makes sure no other command can be provided.    
+            instructions_set.finalize()
         else:
-            instructions_set.exit()
+            instructions_set.end()    
 
 if __name__ == '__main__':
     arg_parser = argparse.ArgumentParser(description='Virtual Memory Manager')
