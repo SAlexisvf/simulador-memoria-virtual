@@ -6,23 +6,29 @@ Running example
 import os
 import argparse
 from parser import instructions_parser
-import instructions_set
+import instructions_set_2
+
+memory_size = 2048
+swap_memory_size = 4096
+page_size = 16
 
 def virtual_memory_manager(filepath, algorithm):
     instructions, arguments = instructions_parser(filepath)
+    instructions_set_2.set_variables(memory_size, swap_memory_size, page_size, algorithm)
     for instruction in instructions:
         if instruction == 'P':
-            instructions_set.process(arguments.pop(0), arguments.pop(0))
-        elif instruction == 'A':
-            instructions_set.access(arguments.pop(0), arguments.pop(0), arguments.pop(0))
-        elif instruction == 'L':
-            instructions_set.free(arguments.pop(0))
-        elif instruction == 'C':
-            instructions_set.comment(arguments.pop(0))
-        elif instruction == 'F':
-            instructions_set.finalize()
-        else:
-            instructions_set.end()    
+            instructions_set_2.process(arguments.pop(0), arguments.pop(0))
+        # elif instruction == 'A':
+        #     instructions_set_2.access(arguments.pop(0), arguments.pop(0), arguments.pop(0))
+        # elif instruction == 'L':
+        #     instructions_set_2.free(arguments.pop(0))
+        # elif instruction == 'C':
+        #     instructions_set_2.comment(arguments.pop(0))
+        # elif instruction == 'F':
+        #     instructions_set_2.finalize()
+        # else:
+        #     instructions_set_2.end() 
+        print()   
 
 if __name__ == '__main__':
     arg_parser = argparse.ArgumentParser(description='Virtual Memory Manager')
