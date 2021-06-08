@@ -15,7 +15,11 @@ page_size = 16
 def virtual_memory_manager(filepath, algorithm):
     instructions, arguments = instructions_parser(filepath)
     instructions_set_2.set_variables(memory_size, swap_memory_size, page_size, algorithm)
-    for instruction in instructions:
+    print('Starting execution of instructions...')
+    for num_instruction, instruction in enumerate(instructions, start=1):
+        # leave space betweet instructions
+        print()
+        print('INSTRUCTION {}'.format(num_instruction))
         if instruction == 'P':
             instructions_set_2.process(arguments.pop(0), arguments.pop(0))
         # elif instruction == 'A':
@@ -28,7 +32,6 @@ def virtual_memory_manager(filepath, algorithm):
         #     instructions_set_2.finalize()
         # else:
         #     instructions_set_2.end() 
-        print()   
 
 if __name__ == '__main__':
     arg_parser = argparse.ArgumentParser(description='Virtual Memory Manager')
