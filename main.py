@@ -1,6 +1,6 @@
 """
 Running example
->>> python main.py -f test_file.txt -a fifo
+>>> python main.py -f test.txt -a fifo
 """
 
 import os
@@ -22,14 +22,14 @@ def virtual_memory_manager(filepath, algorithm):
         print('INSTRUCTION {}'.format(num_instruction))
         if instruction == 'P':
             instructions_set_2.process(arguments.pop(0), arguments.pop(0))
-        # elif instruction == 'A':
-        #     instructions_set_2.access(arguments.pop(0), arguments.pop(0), arguments.pop(0))
-        # elif instruction == 'L':
-        #     instructions_set_2.free(arguments.pop(0))
-        # elif instruction == 'C':
-        #     instructions_set_2.comment(arguments.pop(0))
-        # elif instruction == 'F':
-        #     instructions_set_2.finalize()
+        elif instruction == 'A':
+            instructions_set_2.access(arguments.pop(0), arguments.pop(0), arguments.pop(0))
+        elif instruction == 'L':
+            instructions_set_2.free(arguments.pop(0))
+        elif instruction == 'C':
+            print('// {}'.format(arguments.pop(0)))
+        elif instruction == 'F':
+            instructions_set_2.finalize()
         # else:
         #     instructions_set_2.end() 
 
