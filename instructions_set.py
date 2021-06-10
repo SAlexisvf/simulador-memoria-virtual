@@ -19,6 +19,9 @@ process_time_tracker = []
 swap_in_out_count = 0
 
 def set_variables(m, s, p, a):
+    '''
+    This function set the variables with the values passed from main
+    '''
     global memory_size, swap_memory_size, page_size, algorithm, memory, swap_memory
 
     memory_size = m
@@ -37,11 +40,16 @@ def set_variables(m, s, p, a):
     }] * swap_memory_size
 
 def loadPage(address_offset, process, page, selected_memory):
+    '''
+    This function loads a page to a specific memory (memory/swap_memory).
+    If you pass None values to process and page it can alse be used to free memory
+    '''
     global time
     address_value = {
         'process': None,
         'page': None
     }
+    # if the process and page are not None, fills the values with the process/page info
     if process != None and page != None:
         address_value['process'] = process
         address_value['page'] = page
@@ -49,6 +57,7 @@ def loadPage(address_offset, process, page, selected_memory):
     else:
         time = time + 0.1
 
+    # load page on the selected_memory
     if selected_memory == 'memory':
         for i in range(page_size):
             memory[address_offset + i] = address_value
@@ -57,6 +66,9 @@ def loadPage(address_offset, process, page, selected_memory):
             swap_memory[address_offset + i] = address_value
     
 def swap_frames(current_page, process):
+    '''
+    This function swap frames to swap_memory to create space in primary memory
+    '''
     if algorithm == 'fifo':
         # get the 'first in' page
         removed_frame = fifo_queue.pop(0)
@@ -68,6 +80,7 @@ def swap_frames(current_page, process):
         # return back the page at the end
         lru_queue.append(removed_frame)
 
+    # get the information of the frame to be removed
     removed_address = memory[removed_frame]
     removed_process = removed_address['process']
     removed_page = removed_address['page']
@@ -75,7 +88,9 @@ def swap_frames(current_page, process):
     # find empty space
     for i in range(swap_memory_size):
         if (swap_memory[i]['process'] == None):
+            # load to swap memory
             loadPage(i, removed_process, removed_page, 'swap_memory')
+            # load new frame to memory
             loadPage(removed_frame, process, current_page, 'memory')
 
             print('Page {} from process {} was swapped to the swap memory on frame {}'
@@ -87,7 +102,19 @@ def swap_frames(current_page, process):
             return new_frame
 
 def process(n, p):
+    '''
+    This function loads a specific number of bytes from a specific process to memory
+    '''
     global swap_in_out_count
+
+    # check for invalid cases
+    if n <= 0 or n > memory_size:
+        print('Error! Invalid number of bits, skipping intructions...')
+        return
+    for process in process_time_tracker:
+        if process['process'] == p:
+            print('Error! The process already exist, skipping instruction...')
+            return
 
     pages = math.ceil(n / page_size)
     used_frames = []
@@ -125,7 +152,20 @@ def process(n, p):
     print('frames {} were assigned to process {}'.format(used_frames, p))
 
 def access(d, p, m):
+    '''
+    This function access a specific virtual address and shows the real address
+    If the page is not in memory makes the swap process
+    '''
     global swap_in_out_count, time
+
+    # check invalid case
+    is_process = False
+    for process in process_time_tracker:
+        if process['process'] == p:
+            is_process = True
+    if is_process == False:
+        print('Error! The process does not exist, skipping instruction...')
+        return
 
     print('Running instruction A with parameters {}, {}, {}'.format(d,p,m))
     page = math.ceil(d / page_size)
@@ -179,7 +219,20 @@ def access(d, p, m):
     print('Page {} form process {} does not exist!'.format(d, p))
 
 def free(p):
+    '''
+    This function frees all the memory that is occupied by the provided process
+    '''
     print('Running instruction L with parameters {}'.format(p))
+
+    # check invalid case
+    is_process = False
+    for process in process_time_tracker:
+        if process['process'] == p:
+            is_process = True
+    if is_process == False:
+        print('Error! The process does not exist, skipping instruction...')
+        return
+
     free_frames_memory = []
     free_frames_swap_memory = []
     
@@ -219,6 +272,9 @@ def free(p):
     print('Frames {} from process {} were removed from swap memory'.format(free_frames_swap_memory, p))
 
 def finalize():
+    '''
+    This function creates an output report containing some stadistics about the instructions
+    '''
     global time, fifo_queue, lru_queue, process_time_tracker, swap_in_out_count, memory, swap_memory
 
     print('-------- End of instructions! --------')
@@ -238,7 +294,8 @@ def finalize():
 
     print('\n------ AVERAGE TURNAROUND ------')
     print('Number of process: {}'.format(len(process_time_tracker)))
-    print('Average turnaround: {}'.format(total_time / len(process_time_tracker)))
+    if len(process_time_tracker) != 0:
+        print('Average turnaround: {}'.format(total_time / len(process_time_tracker)))
 
     print('\n------ TOTAL SWAP-OUT/SWAP-IN OPERATIONS ------')
     print('Count: {}'.format(swap_in_out_count))
